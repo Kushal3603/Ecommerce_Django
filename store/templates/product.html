@@ -1,33 +1,78 @@
 {% extends "base.html" %}
 
     {% block content %}
-    <header class="bg-dark py-5">
-        <div class="container px-4 px-lg-5 my-5">
-            <div class="text-center text-white">
-                <h1 class="display-4 fw-bolder">About Us</h1>
-                <p class="lead fw-normal text-white-50 mb-0">Welcome to ShopKaro</p>
+    <div class="container">
+        <br/>
+        <div class="card mb-3">
+            <div class="row g-0">
+              <div class="col-md-4" style="justify-content: center; display: flex;">
+                <img src="{{product.image.url}}" class="img-fluid rounded-start" alt="...">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                <center>
+                  <h5 class="card-title">{{product.name}}</h5>
+                  <br/>
+                  <p class="card-text justify-content-center">{{product.description}}</p>
+                  {% if product.is_sale %}
+                    <div class="d-flex justify-content-center small text-warning mb-2">
+                        <div class="bi-star-fill"></div>
+                        &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                        <div class="bi-star-fill"></div>
+                    </div>
+                    <!-- Product price-->
+                    <strike>₹{{product.price}}</strike>&nbsp;₹{{product.sale_price}}
+                    <br/><br/>
+                  {% else %}
+                    ₹{{product.price}}
+                  {% endif %}
+                  <br/><br/>
+                  <div class="row justify-content-center">
+                    <div class="col-md-2">Quantity:</div>
+                    <div class="col-md-2">
+                        <select class="form-select" aria-label="Default select example" id="qty-cart">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                  </div>
+                  </br></br>
+                  <a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+                  <button class='btn btn-secondary' type="submit" value="{{product.id}}" id="add-cart">Add to Cart</button>
+                  </center>
+                </div>
+              </div>
             </div>
         </div>
-    </header>
-
-    <div class="container">
-        <div class="row">
-            <center>
-                <div class="col-8">
-                    <p align="justify">
-                        <br/><br/>
-                        Lorem ipsum odor amet, consectetuer adipiscing elit. Proin integer natoque convallis ultricies felis erat mollis ac leo. Ipsum elementum vivamus nulla turpis risus pretium. Sagittis magna turpis placerat potenti tristique placerat sagittis ultricies. Pretium porta finibus efficitur ullamcorper integer. Himenaeos diam imperdiet maximus fusce amet, imperdiet ante pharetra.
-                        <br/><br/>
-                        Nam ridiculus dolor suspendisse eros arcu nam litora. Efficitur odio elit purus litora volutpat dui. Mattis ex ligula parturient tempor lacus scelerisque? Dictumst sem interdum pretium vestibulum et. Senectus mus augue iaculis vehicula; lobortis ligula nascetur. Pharetra sit porttitor viverra platea eu vulputate massa vehicula! Quam sociosqu vel pretium amet tortor elementum.
-                        <br/><br/>
-                        Vehicula dolor massa velit sed et senectus vel. Primis auctor sapien at tempus congue placerat metus penatibus. Est viverra interdum turpis non et, morbi ridiculus. Est senectus a at laoreet bibendum, eget eleifend etiam. Augue porttitor dignissim fusce mi condimentum; accumsan viverra conubia. Laoreet accumsan eget sociosqu taciti, adipiscing praesent diam.
-                        <br/><br/>
-                        Risus bibendum facilisi consequat congue augue quisque tristique ornare. Dis rutrum sollicitudin metus blandit morbi dis. Praesent purus rhoncus fringilla maximus viverra fusce ipsum. Sociosqu mi bibendum sodales porta fames montes nostra. Nisl pharetra id adipiscing sit pulvinar nam. Nibh inceptos faucibus fames tempus natoque ultrices nisi eros. Felis hendrerit cursus ad efficitur curae nec auctor.
-                        <br/><br/>
-                        Lectus dis iaculis egestas curae lacinia felis ultrices augue tempor. Proin potenti imperdiet; aenean elementum magnis fringilla pharetra. Penatibus vulputate dignissim torquent vehicula semper conubia vivamus. Tellus ad ridiculus quisque nisi curabitur. Bibendum tincidunt laoreet aliquet semper laoreet curae suscipit in. Aptent egestas sit ligula ut viverra ac venenatis. Luctus potenti ac nibh, nec sapien nec vel nisi. Aenean nascetur parturient phasellus tempus ipsum lectus sapien turpis gravida.
-                    </p><br/><br/>
-                </div>
-            </center>
-        </div>
     </div>
+</br></br></br></br></br></br></br></br></br></br></br></br>
+<script>
+    $(document).on('click','#add-cart',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url: '{% url 'cart_add' %}',
+            data:{
+                product_id:$('#add-cart').val(),
+                product_qty:$('#qty-cart option:selected').text(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action:'post'
+            },
+
+            success: function(json){
+                console.log(json)
+                document.getElementById("cart_quantity").textContent=json.qty
+            },
+
+            error: function(xhr,errmsg,err){
+                console.log(errmsg)
+            }
+
+        })
+
+    })
+</script>
     {% endblock %}
