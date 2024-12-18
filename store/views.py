@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from .forms import SignUpForm
+from .forms import SignUpForm,UpdateUserForm, ChangePasswordForm
 
 def category(request,ctg):
     ctg=ctg.replace('-',' ')
@@ -16,6 +16,10 @@ def category(request,ctg):
     except:
         messages.success(request,('Category dsn\'t exist!!!'))
         return redirect('home')
+
+def category_summary(request):
+    categories=Category.objects.all()
+    return render(request,'category_summary.html',{"categories":categories})
 
 def product(request,pk):
     product=Product.objects.get(id=pk)
@@ -66,3 +70,43 @@ def register_user(request):
             return redirect('register')
     else:
         return render(request,'register.html',{'form':form})
+    
+def update_user(request):
+    if request.user.is_authenticated:
+        current_user=User.objects.get(id=request.user.id)
+        user_form=UpdateUserForm(request.POST or None, instance=current_user)
+
+        if user_form.is_valid():
+            user_form.save()
+
+            login(request,current_user)
+            messages.success(request,"User Has Been Updated")
+            return redirect('home')
+        
+        return render(request,"update_user.html",{'user_form':user_form})
+
+    else:
+        messages.success(request,"You Must Be Logged In!!")
+        return redirect('home')
+    
+def update_password(request):
+    if request.user.is_authenticated:
+        current_user=request.user
+        if request.method=="POST":
+           form=ChangePasswordForm(current_user,request.POST)
+           if form.is_valid():
+               form.save()
+               messages.success(request,"Your password has been updated. Please log in again.")
+            #    login(request,current_user)
+               return redirect('login')
+           else:
+               for error in list(form.errors.values()):
+                   messages.error(request,error)
+                   return redirect('update_password')
+
+        else:
+            form=ChangePasswordForm(current_user)
+            return render(request,'update_password.html',{'form':form})
+    else:
+        messages.success(request,"You Must Be Logged In!!")
+        return redirect('update_password.html')
