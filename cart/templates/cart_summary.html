@@ -72,7 +72,9 @@
                         </div>
                     </div>
                 {% endfor %}
+                <div align="right">
                 <h3 style="margin-left: 15px;">Total: ₹{{totals}}</h3>
+                <a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
                 <br/><br/><br/>
             {% else %}
                 <section class="py-5">

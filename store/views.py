@@ -3,10 +3,12 @@ from .models import Product,Category,Profile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-from django import forms
 from .forms import SignUpForm,UpdateUserForm, ChangePasswordForm, UserInfoForm
+from payment.forms import ShippingForm
+from payment.models import ShippingAddress
 from django.db.models import Q
+import json
+from cart.cart import Cart
 
 def category(request,ctg):
     ctg=ctg.replace('-',' ')
@@ -40,6 +42,13 @@ def login_user(request):
         user=authenticate(request, username=username, password=password)
         if user is not None:
             login(request,user)
+            current_user=Profile.objects.get(user__id=request.user.id)
+            saved_cart=current_user.old_cart
+            if saved_cart:
+                converted_cart=json.loads(saved_cart)
+                cart=Cart(request)
+                for key,value in converted_cart.items():
+                    cart.db_add(product=key,quantity=value)
             messages.success(request,("You have been logged in..."))
             return redirect('home')
         else:
@@ -114,15 +123,19 @@ def update_password(request):
     
 def update_info(request):
     if request.user.is_authenticated:
-        current_user=Profile.objects.get(id=request.user.id)
+        current_user=Profile.objects.get(user__id=request.user.id)
+        shipping_user=ShippingAddress.objects.get(user=request.user)
         form=UserInfoForm(request.POST or None, instance=current_user)
 
-        if form.is_valid():
+        shipping_form=ShippingForm(request.POST or None, instance=shipping_user)
+
+        if form.is_valid() or shipping_form.is_valid():
             form.save()
+            shipping_form.save()
             messages.success(request,"Your Info Has Been Updated")
             return redirect('home')
         
-        return render(request,"update_info.html",{'form':form})
+        return render(request,"update_info.html",{'form':form,'shipping_form':shipping_form})
 
     else:
         messages.success(request,"You Must Be Logged In!!")
