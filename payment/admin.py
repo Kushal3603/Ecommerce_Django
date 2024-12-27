@@ -8,7 +8,15 @@ admin.site.register(OrderItem)
 
 class OrderItemInline(admin.StackedInline):
     model=OrderItem
+    extra=0
+    
 
 class OrderAdmin(admin.ModelAdmin):
     model=Order
-    inlines=
+    fields=["user","full_name","shipping_address","amount_paid","date_ordered","shipped","date_shipped"]
+    readonly_fields=["date_ordered"]
+    inlines=[OrderItemInline]
+
+admin.site.unregister(Order)
+
+admin.site.register(Order,OrderAdmin)
