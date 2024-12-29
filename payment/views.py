@@ -7,9 +7,16 @@ from django.contrib.auth.models import User
 from payment.models import Order, OrderItem
 from store.models import Product,Profile
 import datetime
+from django.urls import reverse
+from paypal.standard.forms import PayPalPaymentsForm
+from django.conf import settings
+import uuid
 
 def payment_success(request):
     return render(request,"payment_success.html",{})
+
+def payment_failed(request):
+    return render(request,"payment_failed.html",{})
 
 def checkout(request):
     cart=Cart(request)
@@ -36,12 +43,27 @@ def billing_info(request):
         my_shipping=request.POST
         request.session['my_shipping']=my_shipping
 
+        host=request.get
+        paypal_dict={
+            'business':settings.PAYPAL_RECIEVER_EMAIL,
+            'amount':totals,
+            'item_name':'Phone Order',
+            'no_shipping':'2',
+            'invoice':str(uuid.uuid4()),
+            'currency_code':'INR',
+            'notify_url':'https://{}{}'.format(host,reverse("paypal-ipn")),
+            'return_url':'https://{}{}'.format(host,reverse("paypal-success")),
+            'cancel_return':'https://{}{}'.format(host,reverse("payment_failed")),
+        }
+
+        paypal_form=PayPalPaymentsForm(initial=paypal_dict)
+
         if request.user.is_authenticated:
             billing_form=PaymentForm()
-            return render(request,'billing_info.html',{"cart_products":cart_products,"quantities":quantities,"totals":totals,"shipping_info":request.POST,"billing_form":billing_form})
+            return render(request,'billing_info.html',{"paypal_form":paypal_form,"cart_products":cart_products,"quantities":quantities,"totals":totals,"shipping_info":request.POST,"billing_form":billing_form})
         else:
             billing_form=PaymentForm()
-            return render(request,'billing_info.html',{"cart_products":cart_products,"quantities":quantities,"totals":totals,"shipping_info":request.POST,"billing_form":billing_form})
+            return render(request,'billing_info.html',{"paypal_form":paypal_form,"cart_products":cart_products,"quantities":quantities,"totals":totals,"shipping_info":request.POST,"billing_form":billing_form})
         
     else:
         messages.success(request,"Access Denied")
