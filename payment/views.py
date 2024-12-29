@@ -40,7 +40,7 @@ def billing_info(request):
         quantities=cart.get_quants()
         totals=cart.cart_total()
 
-        my_shipping=request.POST
+        my_shipping=request.get_host()
         request.session['my_shipping']=my_shipping
 
         host=request.POST
