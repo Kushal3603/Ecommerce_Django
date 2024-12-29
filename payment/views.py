@@ -43,7 +43,7 @@ def billing_info(request):
         my_shipping=request.POST
         request.session['my_shipping']=my_shipping
 
-        host=request.get
+        host=request.POST
         paypal_dict={
             'business':settings.PAYPAL_RECIEVER_EMAIL,
             'amount':totals,
