@@ -51,7 +51,7 @@ def billing_info(request):
             'item_name':'Phone Order',
             'no_shipping':'2',
             'invoice':str(uuid.uuid4()),
-            'currency_code':'INR',
+            'currency_code':'USD',
             'notify_url': f'https://{host}{reverse("paypal-ipn")}',
             'return_url': f'https://{host}{reverse("payment_success")}',
             'cancel_return': f'https://{host}{reverse("payment_failed")}',
