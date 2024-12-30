@@ -52,9 +52,9 @@ def billing_info(request):
             'no_shipping':'2',
             'invoice':str(uuid.uuid4()),
             'currency_code':'INR',
-            'notify_url':'https://{}{}'.format(host,reverse("paypal-ipn")),
-            'return_url':'https://{}{}'.format(host,reverse("payment_success")),
-            'cancel_return':'https://{}{}'.format(host,reverse("payment_failed")),
+            'notify_url': f'https://{host}{reverse("paypal-ipn")}',
+            'return_url': f'https://{host}{reverse("payment_success")}',
+            'cancel_return': f'https://{host}{reverse("payment_failed")}',
         }
 
         paypal_form=PayPalPaymentsForm(initial=paypal_dict)
