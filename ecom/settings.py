@@ -15,7 +15,7 @@ import os
 from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-# load_dotenv()
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -26,13 +26,14 @@ SECRET_KEY = 'django-insecure-m!t&2n#x9h)qjb!4xo9lix1s)5g%p%45ijvug7=@*caaa^!igh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+DB_PASSWORD_YO=os.environ.get['DB_PASSWORD_YO']
 ALLOWED_HOSTS = ['ecommercedjango-production-ea86.up.railway.app']
 CSRF_TRUSTED_ORIGINS=['https://ecommercedjango-production-ea86.up.railway.app']
 
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS = [  
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,7 +79,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecom.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -89,7 +89,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME':'railway',
         'USER':'postgres',
-        'PASSWORD':os.environ['DB_PASSWORD_YO'],
+        'PASSWORD':DB_PASSWORD_YO,
         'HOST':'junction.proxy.rlwy.net',
         'PORT':'22887',
     }
@@ -144,4 +144,4 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 PAYPAL_TEST=True
-PAYPAL_RECIEVER_EMAIL='business@shopkaro.com'
+PAYPAL_RECEIVER_EMAIL='business@shopkaro.com'

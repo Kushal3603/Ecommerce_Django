@@ -46,7 +46,7 @@ def billing_info(request):
 
         host=request.get_host()
         paypal_dict={
-            'business':settings.PAYPAL_RECIEVER_EMAIL,
+            'business':settings.PAYPAL_RECEIVER_EMAIL,
             'amount':totals,
             'item_name':'Phone Order',
             'no_shipping':'2',
@@ -66,6 +66,9 @@ def billing_info(request):
             billing_form=PaymentForm()
             return render(request,'billing_info.html',{"paypal_form":paypal_form,"cart_products":cart_products,"quantities":quantities,"totals":totals,"shipping_info":request.POST,"billing_form":billing_form})
         
+        shipping_form=request.POST
+        return render(request,'billing_info.html',{"paypal_form":paypal_form,"cart_products":cart_products,"quantities":quantities,"totals":totals,"shipping_info":request.POST,"billing_form":billing_form})
+
     else:
         messages.success(request,"Access Denied")
         return redirect('home')
