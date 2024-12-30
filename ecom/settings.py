@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-m!t&2n#x9h)qjb!4xo9lix1s)5g%p%45ijvug7=@*caaa^!igh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-DB_PASSWORD_YO=os.environ.get['DB_PASSWORD_YO']
+DB_PASSWORD_YO=os.environ['DB_PASSWORD_YO']
 ALLOWED_HOSTS = ['ecommercedjango-production-ea86.up.railway.app']
 CSRF_TRUSTED_ORIGINS=['https://ecommercedjango-production-ea86.up.railway.app']
 
