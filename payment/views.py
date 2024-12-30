@@ -11,6 +11,7 @@ from django.urls import reverse
 from paypal.standard.forms import PayPalPaymentsForm
 from django.conf import settings
 import uuid
+from django.views.decorators.csrf import csrf_exempt
 
 def payment_success(request):
     return render(request,"payment_success.html",{})
@@ -68,7 +69,7 @@ def billing_info(request):
     else:
         messages.success(request,"Access Denied")
         return redirect('home')
-
+@csrf_exempt
 def process_order(request):
     if request.POST:
         cart=Cart(request)
