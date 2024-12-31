@@ -47,7 +47,7 @@ def billing_info(request):
         host=request.get_host()
         paypal_dict={
             'business':settings.PAYPAL_RECEIVER_EMAIL,
-            'amount':f"{totals:.2f}",
+            'amount':f"100.00",
             'item_name':'Phone Order',
             'no_shipping':'2',
             'invoice':str(uuid.uuid4()),
